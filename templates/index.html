@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Server Stats</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="icon" href="/static/image.png" type="image/png">
+    <script>
+        const refreshInterval = 3000; // 3 seconds
+
+        async function getStatusData() {
+            const response = await fetch('/status');
+            if (response.ok) {
+                const data = await response.json();
+                updateStatusUI(data);
+            } else {
+                console.error('Failed to fetch status data');
+            }
+        }
+
+        function updateStatusUI(data) {
+            document.getElementById("uptime").textContent = data.uptime;
+            document.getElementById("ping-status").textContent = data.ping_status;
+            document.getElementById("current-tasks").textContent = data.current_tasks;
+            document.getElementById("cpu-usage").style.width = data.cpu_usage + "%";
+            document.getElementById("cpu-usage-text").textContent = data.cpu_usage + "%";
+            document.getElementById("memory-usage").style.width = data.memory_percent + "%";
+            document.getElementById("memory-usage-text").textContent = `${data.memory_used} / ${data.memory_total} GB (${data.memory_percent}%)`;
+            document.getElementById("disk-usage").style.width = data.disk_percent + "%";
+            document.getElementById("disk-usage-text").textContent = `${data.disk_used} / ${data.disk_total} GB (${data.disk_percent}%)`;
+            document.getElementById("upload-usage-text").textContent = `${data.upload_bandwidth} MB`;
+            document.getElementById("download-usage-text").textContent = `${data.download_bandwidth} MB`;
+            document.getElementById("ssh-url").textContent = data.ssh_url;
+            document.getElementById("year").textContent = new Date().getFullYear();
+        }
+
+        function startAutoRefresh() {
+            getStatusData();
+            setInterval(getStatusData, refreshInterval);
+        }
+
+        window.onload = startAutoRefresh;
+    </script>
+    <style>
+        .ssh-box-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Server Stats</h1>
+    </header>
+    <main>
+        <div class="status-container">
+            <div class="status-box">
+                <h2>Uptime</h2>
+                <p id="uptime">fetching...</p>
+            </div>
+            <div class="status-box">
+                <h2>Ping</h2>
+                <p id="ping-status" class="ping-ok">fetching...</p>
+            </div>
+            <div class="status-box">
+                <h2>Current Tasks</h2>
+                <p id="current-tasks">fetching...</p>
+            </div>
+            <div class="status-box">
+                <h2>CPU Usage</h2>
+                <div class="progress-bar">
+                    <div id="cpu-usage" class="progress"></div>
+                </div>
+                <p id="cpu-usage-text">fetching...</p>
+            </div>
+            <div class="status-box">
+                <h2>Memory Usage</h2>
+                <div class="progress-bar">
+                    <div id="memory-usage" class="progress"></div>
+                </div>
+                <p id="memory-usage-text">fetching...</p>
+            </div>
+            <div class="status-box">
+                <h2>Disk Usage</h2>
+                <div class="progress-bar">
+                    <div id="disk-usage" class="progress"></div>
+                </div>
+                <p id="disk-usage-text">fetching...</p>
+            </div>
+            <div class="status-box">
+                <h2>Upload Bandwidth</h2>
+                <p id="upload-usage-text">fetching...</p>
+            </div>
+            <div class="status-box">
+                <h2>Download Bandwidth</h2>
+                <p id="download-usage-text">fetching...</p>
+            </div>
+        </div>
+        <div class="ssh-box-container">
+            <div class="ssh-box">
+                <h2>SSH Access</h2>
+                <pre id="ssh-url">fetching...</pre>
+            </div>
+        </div>
+    </main>
+    <footer>
+        <p>© <span id="year"></span> Server Stats Page | 
+            <a href="https://t.me/shakida69" target="_blank">Build by Shakida</a>
+        </p>
+    </footer>
+</body>
+</html>

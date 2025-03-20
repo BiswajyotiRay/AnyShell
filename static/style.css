@@ -1,0 +1,173 @@
+/* General Styles */
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+    color: #333;
+    box-sizing: border-box;
+}
+
+header, footer {
+    background-color: #fff;
+    color: #333;
+    text-align: center;
+    padding: 20px;
+    border-bottom: 1px solid #ddd;
+}
+
+footer {
+    border-top: 1px solid #ddd;
+    border-bottom: none;
+}
+
+h1 {
+    margin: 0;
+    font-size: 1.8em;
+    color: #333;
+}
+
+main {
+    flex: 1; /* Ensures that main takes up remaining space */
+    padding: 20px;
+    margin-top: 20px; /* Ensures content doesn't overlap with header */
+}
+
+.status-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+    max-width: 1200px; /* Limits the width to prevent stretching on large screens */
+    margin: 0 auto; /* Centers the container */
+}
+
+.status-box {
+    background-color: #fff;
+    border-radius: 20px; /* Increased border-radius for more rounded corners */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    text-align: center;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.status-box:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+}
+
+.status-box h2 {
+    margin: 0 0 15px;
+    color: #333;
+    font-size: 1.4em;
+}
+
+.status-box p {
+    margin: 0;
+    font-size: 1.4em;
+}
+
+.progress-bar {
+    background-color: #f0f0f0;
+    border-radius: 15px; /* Increased border-radius for progress bars */
+    height: 25px;
+    margin: 10px 0;
+    overflow: hidden;
+}
+
+.progress {
+    background-color: #4caf50;
+    height: 100%;
+    border-radius: 15px; /* Match border-radius of the progress bar */
+    transition: width 0.3s;
+}
+
+/* Center the SSH URL box */
+.ssh-box-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.ssh-box {
+    background-color: #fff;
+    border-radius: 20px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    text-align: center;
+    width: 80%;
+    max-width: 600px; /* Prevents it from getting too wide */
+}
+
+.ssh-box h2 {
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.ssh-box pre {
+    background-color: #f4f4f4;
+    padding: 10px;
+    border-radius: 8px;
+    font-family: monospace;
+    word-break: break-all;
+    white-space: pre-wrap;
+    text-align: left;
+}
+
+/* Ping Status */
+.ping-ok {
+    color: #4caf50;
+}
+
+.ping-fail {
+    color: #f44336;
+}
+
+/* Footer */
+footer p {
+    margin: 0;
+    font-size: 1em;
+}
+
+footer a {
+    color: #4caf50; /* Green color for the link */
+    text-decoration: none; /* Remove underline */
+    font-weight: bold; /* Make the link text bold */
+}
+
+footer a:hover {
+    text-decoration: underline; /* Add underline on hover */
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    header, footer {
+        padding: 15px;
+    }
+
+    h1 {
+        font-size: 1.5em;
+    }
+
+    .status-container {
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    }
+
+    .status-box {
+        padding: 15px;
+        border-radius: 15px; /* Adjusted for smaller screens */
+    }
+
+    .status-box h2 {
+        font-size: 1.2em;
+    }
+
+    .status-box p {
+        font-size: 1.1em;
+    }
+}
