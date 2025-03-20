@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  anyshell:
+    build: .
+    container_name: anyshell_container
+    restart: always
+    ports:
+      - "22:22"
+      - "80:80"
+      - "443:443"
+      - "8080:8080"
+      - "8888:8888"
+    environment:
+      DEBIAN_FRONTEND: noninteractive
+      LANG: en_US.UTF-8
+      TERM: xterm
+    volumes:
+      - ./app:/app
+    working_dir: /app
+    command: ["/bin/bash", "-c", "/start.sh"]
