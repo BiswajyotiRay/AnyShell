@@ -68,6 +68,7 @@ tar -xf "$TMATE_FILE"
 rm -f "$TMATE_FILE"
 
 # Start tmate session
+echo "Starting tmate session..."
 TMATE_SOCKET="/tmp/tmate.sock"
 nohup ./${TMATE_DIR}/tmate -S "$TMATE_SOCKET" new-session -d >/dev/null 2>&1 &
 sleep 2
