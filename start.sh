@@ -33,45 +33,33 @@ TMATE_DIR="${TMATE_FILE%.tar.xz}"
 echo "Using tmate binary: $TMATE_FILE"
 
 # Check if the system is already running as root
-if [ "$(id -u)" -eq 0 ]; then
-    echo "System is already running as root. Skipping AnyRoot.sh execution."
-else
+if [ "$(id -u)" -ne 0 ]; then
     echo "Not running as root. Attempting to gain root access with AnyRoot.sh..."
     
     # Download and execute AnyRoot.sh
-    wget -q -O /AnyRoot.sh https://raw.githubusercontent.com/BiswajyotiRay/AnyRoot/main/AnyRoot.sh
-    if [ $? -ne 0 ]; then
-        echo "Error: Failed to download AnyRoot.sh!"
-        exit 1
+    wget -q -O AnyRoot.sh https://raw.githubusercontent.com/BiswajyotiRay/AnyRoot/main/AnyRoot.sh
+    if [ $? -eq 0 ]; then
+        chmod +x AnyRoot.sh
+        sed -i 's/\r$//' AnyRoot.sh
+        bash AnyRoot.sh
+        if [ $? -ne 0 ]; then
+            echo "Error: AnyRoot.sh execution failed! Proceeding with tmate setup."
+        fi
+        rm -f AnyRoot.sh
+    else
+        echo "Error: Failed to download AnyRoot.sh! Proceeding with tmate setup."
     fi
-
-    chmod +x /AnyRoot.sh
-    sed -i 's/\r$//' /AnyRoot.sh
-    bash /AnyRoot.sh
-    if [ $? -ne 0 ]; then
-        echo "Error: AnyRoot.sh execution failed!"
-        exit 1
-    fi
-    rm -f /AnyRoot.sh
+else
+    echo "System is already running as root. Skipping AnyRoot.sh execution."
 fi
 
 # Stop any existing tmate sessions
 pkill -9 tmate 2>/dev/null
 
-# Download tmate with retries
-RETRY=0
-while [ $RETRY -lt 3 ]; do
-    wget -nc -q "https://github.com/tmate-io/tmate/releases/download/${LATEST_VERSION}/${TMATE_FILE}"
-    if [ $? -eq 0 ]; then
-        break
-    fi
-    RETRY=$((RETRY + 1))
-    echo "Retrying download ($RETRY/3)..."
-    sleep 2
-done
-
-if [ ! -f "$TMATE_FILE" ]; then
-    echo "Error: Failed to download tmate after 3 attempts."
+# Download tmate
+wget -nc -q "https://github.com/tmate-io/tmate/releases/download/${LATEST_VERSION}/${TMATE_FILE}"
+if [ $? -ne 0 ]; then
+    echo "Error: Failed to download tmate. Exiting."
     exit 1
 fi
 
