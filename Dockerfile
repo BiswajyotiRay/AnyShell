@@ -22,6 +22,7 @@ RUN apt-get update && \
     jq \
     ca-certificates \
     sudo \
+    nano \
     unzip \
     htop \
     neofetch \
