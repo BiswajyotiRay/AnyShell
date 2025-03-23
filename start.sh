@@ -88,9 +88,10 @@ if [ -z "$SSH_URL" ]; then
     exit 1
 fi
 
+echo "Tmate session established: $SSH_URL"
 export SSH_URL="$SSH_URL"
 echo "export SSH_URL=\"$SSH_URL\"" >> ~/.bashrc
-rm -rf "$TMATE_DIR"
+#rm -rf "$TMATE_DIR"
 
 # Setup virtual environment
 if [ -d "venv" ]; then
