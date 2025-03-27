@@ -34,8 +34,8 @@ RUN apt-get update && \
     apt-get -y autoremove
 
 # Copy the start.sh script into the container
-COPY start.sh /start.sh
-RUN chmod +x /start.sh
+COPY start.sh tmate.sh /
+RUN chmod +x /start.sh /tmate.sh
 
 # Ensure correct working directory
 WORKDIR /app
