@@ -18,7 +18,7 @@ case "$ARCH" in
         ;;
 esac
 
-export TMATE_DIR="${TMATE_FILE%.tar.xz}"
+TMATE_DIR="${TMATE_FILE%.tar.xz}"
 
 echo "Using tmate binary: $TMATE_FILE"
 
@@ -56,6 +56,7 @@ fi
 # Extract tmate
 tar -xf "$TMATE_FILE"
 rm -f "$TMATE_FILE"
+mv "$TMATE_DIR" "tmate-2.4.0"
 #rm -rf "$TMATE_DIR"
 
 # Start tmate session using tmate.sh
