@@ -17,7 +17,7 @@ for i in {1..10}; do
 done
 
 # Get SSH URL
-SSH_URL=$(./${TMATE_DIR}/tmate -S "$TMATE_SOCKET" display -p "#{tmate_ssh}")
+SSH_URL=$("./${TMATE_DIR}/tmate" -S "$TMATE_SOCKET" display -p "#{tmate_ssh}")
 if [ -z "$SSH_URL" ]; then
     echo "Error: Failed to retrieve SSH URL!"
     exit 1
