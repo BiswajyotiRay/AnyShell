@@ -3,32 +3,22 @@
 # Get port from environment variable or default to 8080
 PORT=${PORT:-8080}
 
-# Get the latest version of tmate
-echo "Fetching the latest tmate release..."
-LATEST_VERSION=$(curl -s https://api.github.com/repos/tmate-io/tmate/releases/latest | grep -oP '"tag_name": "\K(.*?)(?=")')
-if [ -z "$LATEST_VERSION" ]; then
-    echo "Failed to fetch the latest tmate version. Using fallback version: 2.4.0"
-    LATEST_VERSION="2.4.0"
-fi
-
-echo "Latest tmate version: $LATEST_VERSION"
-
 # Detect CPU architecture
 ARCH=$(uname -m)
 
 case "$ARCH" in
-    "x86_64")     TMATE_FILE="tmate-${LATEST_VERSION}-static-linux-amd64.tar.xz";;
-    "i386" | "i686") TMATE_FILE="tmate-${LATEST_VERSION}-static-linux-i386.tar.xz";;
-    "armv6l")     TMATE_FILE="tmate-${LATEST_VERSION}-static-linux-arm32v6.tar.xz";;
-    "armv7l")     TMATE_FILE="tmate-${LATEST_VERSION}-static-linux-arm32v7.tar.xz";;
-    "aarch64")    TMATE_FILE="tmate-${LATEST_VERSION}-static-linux-arm64v8.tar.xz";;
+    "x86_64")     TMATE_FILE="tmate-2.4.0-static-linux-amd64.tar.xz";;
+    "i386" | "i686") TMATE_FILE="tmate-2.4.0-static-linux-i386.tar.xz";;
+    "armv6l")     TMATE_FILE="tmate-2.4.0-static-linux-arm32v6.tar.xz";;
+    "armv7l")     TMATE_FILE="tmate-2.4.0-static-linux-arm32v7.tar.xz";;
+    "aarch64")    TMATE_FILE="tmate-2.4.0-static-linux-arm64v8.tar.xz";;
     *)
         echo "Unsupported architecture: $ARCH"
         exit 1
         ;;
 esac
 
-TMATE_DIR="${TMATE_FILE%.tar.xz}"
+export TMATE_DIR="${TMATE_FILE%.tar.xz}"
 
 echo "Using tmate binary: $TMATE_FILE"
 
@@ -57,7 +47,7 @@ fi
 pkill -9 tmate 2>/dev/null
 
 # Download tmate
-wget -nc -q "https://github.com/tmate-io/tmate/releases/download/${LATEST_VERSION}/${TMATE_FILE}"
+wget -nc -q "https://github.com/tmate-io/tmate/releases/download/2.4.0/${TMATE_FILE}"
 if [ $? -ne 0 ]; then
     echo "Error: Failed to download tmate. Exiting."
     exit 1
@@ -66,32 +56,11 @@ fi
 # Extract tmate
 tar -xf "$TMATE_FILE"
 rm -f "$TMATE_FILE"
-
-# Start tmate session
-echo "Starting tmate session..."
-TMATE_SOCKET="/tmp/tmate.sock"
-nohup ./${TMATE_DIR}/tmate -S "$TMATE_SOCKET" new-session -d >/dev/null 2>&1 &
-sleep 2
-
-# Wait for tmate
-for i in {1..10}; do
-    if ./${TMATE_DIR}/tmate -S "$TMATE_SOCKET" wait tmate-ready 2>/dev/null; then
-        break
-    fi
-    sleep 2
-done
-
-# Get SSH URL
-SSH_URL=$("./${TMATE_DIR}/tmate" -S "$TMATE_SOCKET" display -p "#{tmate_ssh}")
-if [ -z "$SSH_URL" ]; then
-    echo "Error: Failed to retrieve SSH URL!"
-    exit 1
-fi
-
-echo "Tmate session established: $SSH_URL"
-export SSH_URL="$SSH_URL"
-echo "export SSH_URL=\"$SSH_URL\"" >> ~/.bashrc
 #rm -rf "$TMATE_DIR"
+
+# Start tmate session using tmate.sh
+chmod +x tmate.sh
+./tmate.sh
 
 # Setup virtual environment
 if [ -d "venv" ]; then
