@@ -61,7 +61,7 @@ mv "$TMATE_DIR" "tmate-2.4.0"
 
 # Start tmate session using tmate.sh
 chmod +x tmate.sh tmate-2.4.0/tmate
-./tmate.sh
+bash tmate.sh
 
 # Setup virtual environment
 if [ -d "venv" ]; then
