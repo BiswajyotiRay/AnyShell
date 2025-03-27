@@ -14,7 +14,12 @@ logger = logging.getLogger(__name__)
 
 # Configurations
 URL_TO_PING = os.getenv("URL_TO_PING", "https://google.com")
-ssh_url = os.getenv("SSH_URL", "not available")
+
+try:
+    with open("ssh_url.txt", "r") as file:
+        ssh_url = file.read().strip()
+except FileNotFoundError:
+    ssh_url = "not available"
 
 def format_uptime(seconds):
     days = seconds // (24 * 3600)

@@ -24,5 +24,4 @@ if [ -z "$SSH_URL" ]; then
 fi
 
 echo "Tmate session established: $SSH_URL"
-echo "export SSH_URL=\"$SSH_URL\"" >> ~/.bashrc
-source ~/.bashrc
+echo "$SSH_URL" > ssh_url.txt
