@@ -90,8 +90,9 @@ else
     exit 1
 fi
 
-# Run Flask app with Gunicorn
 if [ -f "app.py" ]; then
+    # Kill existing Gunicorn process if running
+    ps aux | grep "gunicorn --bind 0.0.0.0:8080" | grep -v grep | awk '{print $2}' | xargs kill -9 2>/dev/null
     echo "Starting Flask app on port $PORT..."
     gunicorn --bind 0.0.0.0:$PORT --workers 1 --worker-class sync --max-requests 1000 --timeout 30 app:app
 else

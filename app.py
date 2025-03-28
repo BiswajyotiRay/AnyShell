@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, render_template
+from flask import Flask, jsonify, render_template, request
 import psutil
 import time
 import requests
@@ -107,7 +107,7 @@ def regenerate():
     global ssh_url
     try:
         subprocess.Popen(["bash", "tmate.sh"])
-        time.sleep(3)
+        time.sleep(5)
         return jsonify({"status": "success"})
     except Exception as e:
         logger.error(f"Error running tmate.sh: {e}")
