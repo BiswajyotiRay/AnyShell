@@ -12,7 +12,6 @@ RUN apt-get update && \
     locales \
     python3 \
     python3-pip \
-    python3-apt \
     python3-dev \
     python3-venv \
     openssh-server \
@@ -22,10 +21,13 @@ RUN apt-get update && \
     jq \
     ca-certificates \
     sudo \
+    nano \
     unzip \
     htop \
     neofetch \
     speedtest-cli \
+    findutils \
+    gawk \
     xz-utils && \
     localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8 && \
     rm -rf /var/lib/apt/lists/* && \

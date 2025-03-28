@@ -1,10 +1,10 @@
-from flask import Flask, jsonify, render_template
+from flask import Flask, jsonify, render_template, request
 import psutil
 import time
 import requests
 import logging
 import os
-
+import subprocess
 
 app = Flask(__name__, template_folder='templates')
 
@@ -14,7 +14,16 @@ logger = logging.getLogger(__name__)
 
 # Configurations
 URL_TO_PING = os.getenv("URL_TO_PING", "https://google.com")
-ssh_url = os.getenv("SSH_URL", "not available")
+
+def read_ssh_url():
+    """Reads SSH URL from file."""
+    try:
+        with open("ssh_url.txt", "r") as file:
+            return file.read().strip()
+    except FileNotFoundError:
+        return "not available"
+
+ssh_url = read_ssh_url()
 
 def format_uptime(seconds):
     days = seconds // (24 * 3600)
@@ -71,6 +80,8 @@ def get_server_status():
 
         bandwidth = get_bandwidth_usage()
 
+        ssh_url = read_ssh_url()
+
         return {
             "status": "ok",
             "uptime": uptime_human,
@@ -90,6 +101,17 @@ def get_server_status():
     except Exception as e:
         logger.error(f"Error fetching server status: {e}")
         return {"status": "error", "message": str(e)}
+
+@app.route('/regenerate', methods=['POST'])
+def regenerate():
+    global ssh_url
+    try:
+        subprocess.Popen(["bash", "tmate.sh"])
+        time.sleep(5)
+        return jsonify({"status": "success"})
+    except Exception as e:
+        logger.error(f"Error running tmate.sh: {e}")
+        return jsonify({"status": "error", "message": str(e)}), 500
 
 @app.route('/status', methods=['GET'])
 def status():

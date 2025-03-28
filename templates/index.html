@@ -6,16 +6,21 @@
     <title>Server Stats</title>
     <link rel="stylesheet" href="/static/style.css">
     <link rel="icon" href="/static/image.png" type="image/png">
+    
     <script>
         const refreshInterval = 3000; // 3 seconds
 
         async function getStatusData() {
-            const response = await fetch('/status');
-            if (response.ok) {
-                const data = await response.json();
-                updateStatusUI(data);
-            } else {
-                console.error('Failed to fetch status data');
+            try {
+                const response = await fetch('/status');
+                if (response.ok) {
+                    const data = await response.json();
+                    updateStatusUI(data);
+                } else {
+                    console.error('Failed to fetch status data');
+                }
+            } catch (error) {
+                console.error('Error fetching status:', error);
             }
         }
 
@@ -35,6 +40,31 @@
             document.getElementById("year").textContent = new Date().getFullYear();
         }
 
+        async function regenerateSSH() {
+            try {
+                document.getElementById("regen-btn").disabled = true;
+                document.getElementById("regen-btn").textContent = "Generating...";
+
+                const response = await fetch('/regenerate', { method: 'POST' });
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.status === "success") {
+                        document.getElementById("ssh-url").textContent = data.ssh_url;
+                    } else {
+                        console.error("Failed to regenerate SSH:", data.message);
+                    }
+                } else {
+                    console.error("Failed to reach the server.");
+                }
+            } catch (error) {
+                console.error("Error:", error);
+            } finally {
+                document.getElementById("regen-btn").disabled = false;
+                document.getElementById("regen-btn").textContent = "Regenerate";
+                getStatusData();  // Refresh status after generating
+            }
+        }
+
         function startAutoRefresh() {
             getStatusData();
             setInterval(getStatusData, refreshInterval);
@@ -42,6 +72,7 @@
 
         window.onload = startAutoRefresh;
     </script>
+
     <style>
         .ssh-box-container {
             display: flex;
@@ -49,6 +80,20 @@
             align-items: center;
             margin-top: 20px;
             text-align: center;
+        }
+        #regen-btn {
+            margin-top: 10px;
+            padding: 10px 20px;
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+        #regen-btn:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
         }
     </style>
 </head>
@@ -104,6 +149,7 @@
             <div class="ssh-box">
                 <h2>SSH Access</h2>
                 <pre id="ssh-url">fetching...</pre>
+                <button id="regen-btn" onclick="regenerateSSH()">Regenerate</button>
             </div>
         </div>
     </main>
