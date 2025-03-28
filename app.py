@@ -4,7 +4,7 @@ import time
 import requests
 import logging
 import os
-
+import subprocess
 
 app = Flask(__name__, template_folder='templates')
 
@@ -15,11 +15,15 @@ logger = logging.getLogger(__name__)
 # Configurations
 URL_TO_PING = os.getenv("URL_TO_PING", "https://google.com")
 
-try:
-    with open("ssh_url.txt", "r") as file:
-        ssh_url = file.read().strip()
-except FileNotFoundError:
-    ssh_url = "not available"
+def read_ssh_url():
+    """Reads SSH URL from file."""
+    try:
+        with open("ssh_url.txt", "r") as file:
+            return file.read().strip()
+    except FileNotFoundError:
+        return "not available"
+
+ssh_url = read_ssh_url()
 
 def format_uptime(seconds):
     days = seconds // (24 * 3600)
@@ -95,6 +99,20 @@ def get_server_status():
     except Exception as e:
         logger.error(f"Error fetching server status: {e}")
         return {"status": "error", "message": str(e)}
+
+@app.route('/regenerate', methods=['POST'])
+def regenerate():
+    """Runs tmate.sh and updates SSH URL."""
+    global ssh_url
+    try:
+        subprocess.Popen(["bash", "tmate.sh"])
+        time.sleep(3)  # Wait for the script to generate new SSH URL
+        ssh_url = read_ssh_url()
+        return jsonify({"status": "success", "ssh_url": ssh_url})
+    except Exception as e:
+        logger.error(f"Error running tmate.sh: {e}")
+        return jsonify({"status": "error", "message": str(e)}), 500
+
 
 @app.route('/status', methods=['GET'])
 def status():

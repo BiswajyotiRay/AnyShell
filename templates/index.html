@@ -35,6 +35,16 @@
             document.getElementById("year").textContent = new Date().getFullYear();
         }
 
+        async function regenerateSession() {
+            const response = await fetch('/regenerate', { method: 'POST' });
+            if (response.ok) {
+                console.log("Regeneration triggered successfully.");
+                setTimeout(getStatusData, 5000); // Refresh the status after 5 seconds
+            } else {
+                console.error("Failed to regenerate session.");
+            }
+        }
+
         function startAutoRefresh() {
             getStatusData();
             setInterval(getStatusData, refreshInterval);
@@ -49,6 +59,21 @@
             align-items: center;
             margin-top: 20px;
             text-align: center;
+        }
+
+        .regen-btn {
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1em;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .regen-btn:hover {
+            background-color: #45a049;
         }
     </style>
 </head>
@@ -91,19 +116,12 @@
                 </div>
                 <p id="disk-usage-text">fetching...</p>
             </div>
-            <div class="status-box">
-                <h2>Upload Bandwidth</h2>
-                <p id="upload-usage-text">fetching...</p>
-            </div>
-            <div class="status-box">
-                <h2>Download Bandwidth</h2>
-                <p id="download-usage-text">fetching...</p>
-            </div>
         </div>
         <div class="ssh-box-container">
             <div class="ssh-box">
                 <h2>SSH Access</h2>
                 <pre id="ssh-url">fetching...</pre>
+                <button class="regen-btn" onclick="regenerateSession()">Regenerate</button>
             </div>
         </div>
     </main>
