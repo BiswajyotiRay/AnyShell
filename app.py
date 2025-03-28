@@ -80,6 +80,8 @@ def get_server_status():
 
         bandwidth = get_bandwidth_usage()
 
+        ssh_url = read_ssh_url()
+
         return {
             "status": "ok",
             "uptime": uptime_human,
@@ -102,17 +104,14 @@ def get_server_status():
 
 @app.route('/regenerate', methods=['POST'])
 def regenerate():
-    """Runs tmate.sh and updates SSH URL."""
     global ssh_url
     try:
         subprocess.Popen(["bash", "tmate.sh"])
-        time.sleep(3)  # Wait for the script to generate new SSH URL
-        ssh_url = read_ssh_url()
-        return jsonify({"status": "success", "ssh_url": ssh_url})
+        time.sleep(3)
+        return jsonify({"status": "success"})
     except Exception as e:
         logger.error(f"Error running tmate.sh: {e}")
         return jsonify({"status": "error", "message": str(e)}), 500
-
 
 @app.route('/status', methods=['GET'])
 def status():
